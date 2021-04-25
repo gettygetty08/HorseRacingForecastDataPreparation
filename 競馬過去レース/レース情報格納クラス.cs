@@ -15,6 +15,9 @@ namespace 競馬過去レース
         public string 距離 { get; set; }
         public string 馬場 { get; set; }
         public string タイム { get; set; }
+        public string 斤量 { get; set; }
+        public string ペース { get; set; }
+        public string 上り { get; set; }
         public string 馬体重 { get; set; }
         public string 日付 { get; set; }
 

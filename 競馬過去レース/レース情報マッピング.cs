@@ -17,8 +17,11 @@ namespace 競馬過去レース
             Map(x => x.距離).Index(3);
             Map(x => x.馬場).Index(4);
             Map(x => x.タイム).Index(5);
-            Map(x => x.馬体重).Index(6);
-            Map(x => x.日付).Index(7);
+            Map(x => x.斤量).Index(6);
+            Map(x => x.ペース).Index(7);
+            Map(x => x.上り).Index(8);
+            Map(x => x.馬体重).Index(9);
+            Map(x => x.日付).Index(10);
         }
     }
 }

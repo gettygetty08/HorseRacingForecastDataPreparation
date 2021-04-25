@@ -118,9 +118,6 @@ namespace 競馬過去レース
                 MessageBox.Show(ex.Message);
             }
             
-
-
-
         }
     }
 }
