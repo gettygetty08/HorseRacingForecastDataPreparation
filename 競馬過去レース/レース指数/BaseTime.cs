@@ -16,6 +16,8 @@ namespace 競馬過去レース.レース指数
         public int 芝1800 { get; set; }
         public int 芝2000 { get; set; }
         public int 芝2400 { get; set; }
+        public int 芝2500 { get; set; }
+        public int 芝3000 { get; set; }
         public int ダ1200 { get; set; }
         public int ダ1400 { get; set; }
         public int ダ1600 { get; set; }
@@ -39,6 +41,8 @@ namespace 競馬過去レース.レース指数
                {"芝1800",芝1800 },
                {"芝2000",芝2000 },
                {"芝2400",芝2400 },
+               {"芝2500",芝2500 },
+               {"芝3000",芝3000 },
                {"ダ1200",ダ1200 },
                {"ダ1400",ダ1400 },
                {"ダ1600",ダ1600 },

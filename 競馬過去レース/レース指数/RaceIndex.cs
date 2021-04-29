@@ -13,26 +13,26 @@ namespace 競馬過去レース.レース指数
         private double RunTime { get; set; }
         private double Baba { get; set; }
         private double Weight { get; set; }
-        private const double RaceRangeIndex = 5.7;
+        private double RaceRangeIndex { get; set; }
         private Dictionary<string, double> BabaIndex = new Dictionary<string, double>()
         {
-            {"良",0.0 },
-            {"稍",0.9 },
-            {"重",-0.5 },
-            {"不",-0.9 }
+            {"良",0 },
+            {"稍",9 },
+            {"重",-5 },
+            {"不",9 }
         };
         private Dictionary<string, double> WeightIndex = new Dictionary<string, double>()
         {
-            {"51",2.9 },
-            {"52",0.7 },
-            {"53",0.9 },
-            {"54",0.9 },
-            {"55",0.0 },
-            {"56.5",-5.0 },
-            {"57",-1.3 },
-            {"58",-2.2 },
-            {"58.5",-8.1 },
-            {"59",-6.3 }
+            {"51",29 },
+            {"52",7 },
+            {"53",9 },
+            {"54",9 },
+            {"55",0 },
+            {"56.5",-50 },
+            {"57",-13 },
+            {"58",-22 },
+            {"58.5",-81 },
+            {"59",-63 }
         };
         private List<BaseTime> ListBaseTime = new List<BaseTime>()
         {
@@ -48,6 +48,15 @@ namespace 競馬過去レース.レース指数
             new BaseTime小倉()
         };
 
+        private Dictionary<string, double> RaceClassTimeCorrection = new Dictionary<string, double>()
+        {
+            {"G1",-13 },
+            {"G2",-8 },
+            {"G3",-6 },
+            {"未勝利",35 },
+            {"新馬",24 }
+        };
+
         public RaceIndex(string racePlaceName,string raceRange, double runTime,string baba,string weight)
         {
             this.RacePlaceName = racePlaceName;
@@ -60,8 +69,31 @@ namespace 競馬過去レース.レース指数
 
         public double OutSpeedIndex()
         {
-            var btime = ListBaseTime.SingleOrDefault(x => x.Get開催場所() == RacePlaceName).Get基準タイム(RaceRange);
-            return (btime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
+            var baseTime = ListBaseTime.SingleOrDefault(x => x.Get開催場所() == RacePlaceName).Get基準タイム(RaceRange);
+            var デバッグ確認用 = (baseTime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
+            return (baseTime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
+       
+        }
+        public double OutSpeedIndex(string raceName)
+        {
+
+            var baseTime = ListBaseTime.SingleOrDefault(x => x.Get開催場所() == RacePlaceName).Get基準タイム(RaceRange);
+
+            RaceRangeIndex = (1.0 / baseTime) * 1000;
+
+            double correctionTime = 0;
+            foreach (var item in RaceClassTimeCorrection)
+            {
+                if (raceName.Contains(item.Key))
+                {
+                    correctionTime = RaceClassTimeCorrection[item.Key];
+                    break;
+                }
+
+            }
+
+            var デバッグ確認用 = (baseTime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
+            return ((baseTime+correctionTime) - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
         }
 
     }

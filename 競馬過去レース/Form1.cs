@@ -13,7 +13,7 @@ using System.IO;
 using System.Windows;
 using System.Data;
 using System.Reflection;
-
+using 競馬過去レース.レース指数;
 
 namespace 競馬過去レース
 {
@@ -59,7 +59,7 @@ namespace 競馬過去レース
                 var outDirectoryInfomation = new DirectoryInfo(OutFolderPathTextBox.Text);
                 var horseRaceList = raceDirectoryInfomation.GetFiles().ToList();
                 var joinRaceInfoList = new List<レース情報格納クラス>();
-                var 距離リスト = new string[] { "芝1000", "芝1200", "芝1400", "芝1600", "芝1800", "芝2000", "芝2400", "ダ1200", "ダ1400", "ダ1600", "ダ1800" };
+                var 距離リスト = new string[] { "芝1000", "芝1200", "芝1400", "芝1600", "芝1800", "芝2000", "芝2400","芝2500","芝3000", "ダ1200", "ダ1400", "ダ1600", "ダ1800" };
                 var 距離別タイム出力用 = new List<距離別タイム格納クラス>();
 
                 var befor1Years = DateTime.Now.AddYears(-1).ToString();
@@ -85,29 +85,59 @@ namespace 競馬過去レース
                     var list = CSV操作.GetCsv(item.FullName).Where(x => x.日付.CompareTo(befor1Years) > 0).ToList();
 
 
-                    foreach (var 馬場状態 in list.GroupBy(x => x.馬場))
+                    //foreach (var 馬場状態 in list.GroupBy(x => x.馬場))
+                    //{
+                    //    var wk2 = new 距離別タイム格納クラス() { 馬名 = Path.GetFileNameWithoutExtension(item.FullName) };
+                    //    wk2.馬場状態 = 馬場状態.Key;
+                    //    foreach (var item2 in 距離リスト)
+                    //    {
+                    //        var wk1 = list.Where(x => x.距離 == item2 && x.馬場 == 馬場状態.Key).OrderByDescending(x => x.日付).FirstOrDefault();
+
+                    //        if (wk1 == null) continue;
+
+                    //        string time = wk1.タイム;
+                    //        int min = int.Parse(time.Substring(0, 1));
+                    //        int sec = int.Parse(time.Substring(2, 2));
+                    //        int msec = int.Parse(time.Substring(5, 1)) * 100;
+                    //        var timespan = new TimeSpan(0, 0, min, sec, msec);
+
+                    //        var スピード指数 = new RaceIndex(wk1.開催.Substring(1,2), wk1.距離, timespan.TotalSeconds * 10, wk1.馬場, wk1.斤量);
+
+                    //        var 距離設定 = typeof(距離別タイム格納クラス).GetProperty($"{item2}");
+                    //        距離設定.SetValue(wk2, スピード指数.OutSpeedIndex().ToString());
+                    //    }
+
+
+
+                    var wk2 = new 距離別タイム格納クラス() { 馬名 = Path.GetFileNameWithoutExtension(item.FullName) };
+                    foreach (var item2 in 距離リスト)
                     {
-                        var wk2 = new 距離別タイム格納クラス() { 馬名 = Path.GetFileNameWithoutExtension(item.FullName) };
-                        wk2.馬場状態 = 馬場状態.Key;
-                        foreach (var item2 in 距離リスト)
-                        {
-                            var wk1 = list.Where(x => x.距離 == item2 && x.馬場 == 馬場状態.Key).OrderByDescending(x => x.日付).FirstOrDefault();
+                        var wk1 = list.Where(x => x.距離 == item2).OrderByDescending(x => x.日付).FirstOrDefault();
 
-                            if (wk1 == null) continue;
+                        if (wk1 == null || string.IsNullOrEmpty(wk1.タイム) ) continue;
 
-                            var 距離設定 = typeof(距離別タイム格納クラス).GetProperty($"{item2}");
-                            距離設定.SetValue(wk2, wk1.タイム);
-                        }
+                        string time = wk1.タイム;
+                        int min = int.Parse(time.Substring(0, 1));
+                        int sec = int.Parse(time.Substring(2, 2));
+                        int msec = int.Parse(time.Substring(5, 1)) * 100;
+                        var timespan = new TimeSpan(0, 0, min, sec, msec);
+                        double 走破Time = Double.Parse($"{timespan.TotalSeconds * 10:####}");
 
-                        距離別タイム出力用.Add(wk2);
+                        var スピード指数 = new RaceIndex(wk1.開催.Substring(1, 2), wk1.距離, 走破Time, wk1.馬場, wk1.斤量);
+
+                        var 距離設定 = typeof(距離別タイム格納クラス).GetProperty($"{item2}");
+                        距離設定.SetValue(wk2, スピード指数.OutSpeedIndex(wk1.レース名).ToString("###.#"));
                     }
+
+                    距離別タイム出力用.Add(wk2);
+
 
                 }
 
                 //string ファイル名 = $"{raceDirectoryInfomation.Name}予想用ファイル.csv";
                 //CSV操作.CSV出力<レース予想用ファイル出力マッピング, レース情報格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名), joinRaceInfoList);
-                string ファイル名 = $"{raceDirectoryInfomation.Name}距離別タイム.csv";
-                CSV操作.CSV出力<距離別タイム出力用マッピング, 距離別タイム格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名), 距離別タイム出力用);
+                string ファイル名 = $"{raceDirectoryInfomation.Name}距離別スピード指数.csv";
+                CSV操作.CSV出力<距離別タイム出力用マッピング2, 距離別タイム格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名), 距離別タイム出力用);
 
                 MessageBox.Show("処理完了。\nファイルのパスをクリップボードにコピーしています。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Clipboard.SetData(DataFormats.Text, Path.Combine(outDirectoryInfomation.FullName, ファイル名));
