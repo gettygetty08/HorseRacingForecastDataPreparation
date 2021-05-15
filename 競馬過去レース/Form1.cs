@@ -59,7 +59,7 @@ namespace 競馬過去レース
                 var outDirectoryInfomation = new DirectoryInfo(OutFolderPathTextBox.Text);
                 var horseRaceList = raceDirectoryInfomation.GetFiles().ToList();
                 var joinRaceInfoList = new List<レース情報格納クラス>();
-                var 距離リスト = new string[] { "芝1000", "芝1200", "芝1400", "芝1600", "芝1800", "芝2000", "芝2400","芝2500","芝3000", "ダ1200", "ダ1400", "ダ1600", "ダ1800" };
+                var 距離リスト = new string[] { "芝1000", "芝1200", "芝1400", "芝1600", "芝1800", "芝2000","芝2200", "芝2400","芝2500","芝3000", "ダ1200", "ダ1400", "ダ1600", "ダ1800" };
                 var 距離別タイム出力用 = new List<距離別タイム格納クラス>();
 
                 var befor1Years = DateTime.Now.AddYears(-1).ToString();
@@ -114,7 +114,7 @@ namespace 競馬過去レース
                     {
                         var wk1 = list.Where(x => x.距離 == item2).OrderByDescending(x => x.日付).FirstOrDefault();
 
-                        if (wk1 == null || string.IsNullOrEmpty(wk1.タイム) ) continue;
+                        if (wk1 == null || string.IsNullOrEmpty(wk1.タイム) || wk1.開催.Length < 4 ) continue;
 
                         string time = wk1.タイム;
                         int min = int.Parse(time.Substring(0, 1));

@@ -16,6 +16,7 @@ namespace 競馬過去レース
         public string 芝1600 { get; set; }
         public string 芝1800 { get; set; }
         public string 芝2000 { get; set; }
+        public string 芝2200 { get; set; }
         public string 芝2400 { get; set; }
         public string 芝2500 { get; set; }
         public string 芝3000 { get; set; }
