@@ -10,7 +10,7 @@ namespace 競馬過去レース.レース指数
     {
         private string RacePlaceName { get; set; }
         private string RaceRange { get; set; }
-        private double RunTime { get; set; }
+        private double RunningTime { get; set; }
         private double Baba { get; set; }
         private double Weight { get; set; }
         private double RaceRangeIndex { get; set; }
@@ -61,7 +61,7 @@ namespace 競馬過去レース.レース指数
         {
             this.RacePlaceName = racePlaceName;
             this.RaceRange = raceRange;
-            this.RunTime = runTime;
+            this.RunningTime = runTime;
             this.Baba = BabaIndex[baba];
             this.Weight = WeightIndex.ContainsKey(baba)? WeightIndex[weight] : 0.0;
 
@@ -70,8 +70,8 @@ namespace 競馬過去レース.レース指数
         public double OutSpeedIndex()
         {
             var baseTime = ListBaseTime.SingleOrDefault(x => x.Get開催場所() == RacePlaceName).Get基準タイム(RaceRange);
-            var デバッグ確認用 = (baseTime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
-            return (baseTime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
+            var デバッグ確認用 = (baseTime - RunningTime) * RaceRangeIndex + 80 + Baba + Weight;
+            return (baseTime - RunningTime) * RaceRangeIndex + 80 + Baba + Weight;
        
         }
         public double OutSpeedIndex(string raceName)
@@ -92,8 +92,8 @@ namespace 競馬過去レース.レース指数
 
             }
 
-            var デバッグ確認用 = (baseTime - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
-            return ((baseTime+correctionTime) - RunTime) * RaceRangeIndex + 80 + Baba + Weight;
+            var デバッグ確認用 = (baseTime - RunningTime) * RaceRangeIndex + 80 + Baba + Weight;
+            return ((baseTime+correctionTime) - RunningTime) * RaceRangeIndex + 80 + Baba + Weight;
         }
 
     }

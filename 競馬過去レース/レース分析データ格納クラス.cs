@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace 競馬過去レース
 {
-    public class 距離別タイム格納クラス
+    public class レース分析データ格納クラス
     {
         public string 馬名 { get; set; }
         public string 馬場状態 { get; set; }
@@ -24,6 +24,16 @@ namespace 競馬過去レース
         public string ダ1400 { get; set; }
         public string ダ1600 { get; set; }
         public string ダ1800 { get; set; }
+        public string 東京 { get; set; }
+        public string 中山 { get; set; }
+        public string 京都 { get; set; }
+        public string 阪神 { get; set; }
+        public string 中京 { get; set; }
+        public string 札幌 { get; set; }
+        public string 函館 { get; set; }
+        public string 福島 { get; set; }
+        public string 新潟 { get; set; }
+        public string 小倉 { get; set; }
 
     }
 }

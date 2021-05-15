@@ -99,9 +99,8 @@
     <Compile Include="レース指数\BaseTime.cs" />
     <Compile Include="レース指数\BaseTime東京.cs" />
     <Compile Include="レース指数\RaceIndex.cs" />
-    <Compile Include="レース指数クラス.cs" />
     <Compile Include="距離別タイム出力用マッピング.cs" />
-    <Compile Include="距離別タイム格納クラス.cs" />
+    <Compile Include="レース分析データ格納クラス.cs" />
     <EmbeddedResource Include="Form1.resx">
       <DependentUpon>Form1.cs</DependentUpon>
     </EmbeddedResource>
