@@ -34,6 +34,9 @@ namespace 競馬過去レース
         public string 福島 { get; set; }
         public string 新潟 { get; set; }
         public string 小倉 { get; set; }
-
+        public string 良 { get; set; }
+        public string 稍 { get; set; }
+        public string 重 { get; set; }
+        public string 不 { get; set; }
     }
 }

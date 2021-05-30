@@ -81,6 +81,10 @@ namespace 競馬過去レース
             Map(x => x.福島).Index(22).Name("福島");
             Map(x => x.新潟).Index(23).Name("新潟");
             Map(x => x.小倉).Index(24).Name("小倉");
+            Map(x => x.良).Index(25).Name("良");
+            Map(x => x.稍).Index(26).Name("稍");
+            Map(x => x.重).Index(27).Name("重");
+            Map(x => x.不).Index(28).Name("不");
 
 
 

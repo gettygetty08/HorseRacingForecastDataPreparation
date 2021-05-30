@@ -61,8 +61,12 @@ namespace 競馬過去レース
                 var joinRaceInfoList = new List<レース情報格納クラス>();
                 var 距離リスト = new string[] { "芝1000", "芝1200", "芝1400", "芝1600", "芝1800", "芝2000","芝2200", "芝2400","芝2500","芝3000", "ダ1200", "ダ1400", "ダ1600", "ダ1800" };
                 var コースリスト = new string[] { "東京", "中山", "京都", "阪神", "中京", "札幌", "函館", "福島", "新潟", "小倉" };
+                var 馬場リスト = new string[] { "良", "稍", "重", "不" };
                 var 距離別スピード指数出力用 = new List<レース分析データ格納クラス>();
                 var 要素別着順出力用 = new List<レース分析データ格納クラス>();
+                var ハイペース要素別3F出力用 = new List<レース分析データ格納クラス>();
+                var スローペース要素別3F出力用 = new List<レース分析データ格納クラス>();
+                var ミドルペース要素別3F出力用 = new List<レース分析データ格納クラス>();
 
 
                 //1年前まで
@@ -79,9 +83,10 @@ namespace 競馬過去レース
                     var horseName = Path.GetFileNameWithoutExtension(RaceResults.FullName);
 
                     距離別スピード指数出力用.Add(GetSpeedIndex(workList, horseName,距離リスト));
-                    要素別着順出力用.Add(Get要素別着順(raceResultsByHorse, horseName, 距離リスト, コースリスト));
-
-
+                    要素別着順出力用.Add(Get要素別着順(raceResultsByHorse, horseName, 距離リスト, コースリスト,馬場リスト));
+                    ハイペース要素別3F出力用.Add(Get要素別3F(workList.Where(x => ペース判定(x.ペース) == "ハイペース").ToList(), horseName, 距離リスト, コースリスト, 馬場リスト));
+                    スローペース要素別3F出力用.Add(Get要素別3F(workList.Where(x => ペース判定(x.ペース) == "スローペース").ToList(), horseName, 距離リスト, コースリスト, 馬場リスト));
+                    ミドルペース要素別3F出力用.Add(Get要素別3F(workList.Where(x => ペース判定(x.ペース) == "ミドルペース").ToList(), horseName, 距離リスト, コースリスト, 馬場リスト));
                 }
 
 
@@ -92,6 +97,13 @@ namespace 競馬過去レース
 
                 string ファイル名2 = $"{raceDirectoryInfomation.Name}要素別着順.csv";
                 CSV操作.CSV出力<要素別着順一覧出力用マッピング, レース分析データ格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名2), 要素別着順出力用);
+
+                string ファイル名3 = $"{raceDirectoryInfomation.Name}上がり3Fハイペース.csv";
+                CSV操作.CSV出力<要素別着順一覧出力用マッピング, レース分析データ格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名3), ハイペース要素別3F出力用);
+                string ファイル名4 = $"{raceDirectoryInfomation.Name}上がり3Fスローペース.csv";
+                CSV操作.CSV出力<要素別着順一覧出力用マッピング, レース分析データ格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名4), スローペース要素別3F出力用);
+                string ファイル名5 = $"{raceDirectoryInfomation.Name}上がり3Fミドルペース.csv";
+                CSV操作.CSV出力<要素別着順一覧出力用マッピング, レース分析データ格納クラス>(Path.Combine(outDirectoryInfomation.FullName, ファイル名5), ミドルペース要素別3F出力用);
 
                 MessageBox.Show("処理完了。\nファイルのパスをクリップボードにコピーしています。", "情報", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 Clipboard.SetData(DataFormats.Text, Path.Combine(outDirectoryInfomation.FullName, ファイル名));
@@ -134,7 +146,7 @@ namespace 競馬過去レース
         #endregion
 
         #region[---Get要素別着順]
-        private レース分析データ格納クラス Get要素別着順(List<レース情報格納クラス> raceResults, string horceName, string[] racingDistance,string[] courseList)
+        private レース分析データ格納クラス Get要素別着順(List<レース情報格納クラス> raceResults, string horceName, string[] racingDistance,string[] courseList,string[] babaList)
         {
             var wk = new レース分析データ格納クラス() { 馬名 = horceName };
             //距離別着順集計
@@ -155,6 +167,50 @@ namespace 競馬過去レース
                 保存先設定.SetValue(wk, 着順集計結果(wk1));
             }
 
+            //馬場状態別
+            foreach (var baba in babaList)
+            {
+                var wk1 = raceResults.Where(x => x.馬場.Contains(baba)).ToList();
+
+                var 保存先設定 = typeof(レース分析データ格納クラス).GetProperty($"{baba}");
+                保存先設定.SetValue(wk, 着順集計結果(wk1));
+            }
+
+            return wk;
+        }
+        #endregion
+
+        #region[---Get要素別3F]
+        private レース分析データ格納クラス Get要素別3F(List<レース情報格納クラス> raceResults, string horceName, string[] racingDistance, string[] courseList, string[] babaList)
+        {
+            var wk = new レース分析データ格納クラス() { 馬名 = horceName };
+            //距離別着順集計
+            foreach (var distance in racingDistance)
+            {
+                var wk1 = raceResults.Where(x => x.距離 == distance).ToList();
+
+                var 保存先設定 = typeof(レース分析データ格納クラス).GetProperty($"{distance}");
+                保存先設定.SetValue(wk, Get最速上がり3F(wk1));
+            }
+
+            //コース別着順集計
+            foreach (var course in courseList)
+            {
+                var wk1 = raceResults.Where(x => x.開催.Contains(course)).ToList();
+
+                var 保存先設定 = typeof(レース分析データ格納クラス).GetProperty($"{course}");
+                保存先設定.SetValue(wk, Get最速上がり3F(wk1));
+            }
+
+            //馬場状態別
+            foreach (var baba in babaList)
+            {
+                var wk1 = raceResults.Where(x => x.馬場.Contains(baba)).ToList();
+
+                var 保存先設定 = typeof(レース分析データ格納クラス).GetProperty($"{baba}");
+                保存先設定.SetValue(wk, Get最速上がり3F(wk1));
+            }
+
             return wk;
         }
         #endregion
@@ -170,5 +226,32 @@ namespace 競馬過去レース
             return results = $"({first}-{second}-{third}-{outside})";
         } 
 
+        private string Get最速上がり3F(List<レース情報格納クラス> list)
+        {
+            double conv = 0;
+            if (list.Count() == 0) return "";
+
+            return list.OrderBy(x => x.上り).FirstOrDefault().上り;
+        }
+
+        private string ペース判定(string value)
+        {
+            var ペース = value.Split('-');
+            if (ペース.Length < 2) return "判定不能";
+            foreach (var item in ペース)
+            {
+                if (!double.TryParse(item, out var i)) return "判定不能";
+            }
+
+            double result = double.Parse(ペース[0]) - double.Parse(ペース[1]);
+
+            if (result >= 1) return "スローペース";
+            if (result >= -1) return "ハイペース";
+            if (result < 1 && result < -1) return "ミドルペース";
+
+            return "判定不能";
+
+
+        }
     }
 }
